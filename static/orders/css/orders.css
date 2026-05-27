@@ -1,0 +1,5 @@
+.checkout-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+@media screen and (max-width: 900px) and (max-height: 1200px) {
+    .checkout-layout { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Оформление заказа | Candels{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'orders/css/orders.css' %}">
+{% endblock %}
+{% block content %}
+<h1>Оформление заказа</h1>
+
+<div class="checkout-layout">
+    <section class="card">
+        <h3>Ваш заказ</h3>
+        <ul>
+            {% for item in cart %}
+                <li>{{ item.product.name }} x {{ item.quantity }} — {{ item.total_price }} ₽</li>
+            {% endfor %}
+        </ul>
+        <p><strong>Итого: {{ cart.get_total_price }} ₽</strong></p>
+    </section>
+
+    <section class="card">
+        <h3>Контактные данные</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <p class="muted">Оплата производится после звонка и согласования деталей заказа.</p>
+            <button class="btn" type="submit">Отправить заказ</button>
+        </form>
+    </section>
+</div>
+{% endblock %}

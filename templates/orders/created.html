@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Заказ принят | Candels{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'orders/css/orders.css' %}">
+{% endblock %}
+{% block content %}
+<section class="card">
+    <h1>Спасибо за заказ</h1>
+    <p>Заявка №{{ order.id }} принята. Мы свяжемся с вами в ближайшее время.</p>
+    <a class="btn" href="{% url 'core:home' %}">На главную</a>
+</section>
+{% endblock %}

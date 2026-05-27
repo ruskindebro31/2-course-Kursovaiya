@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Главная | Candels{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'catalog/css/catalog.css' %}">
+{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>Свечи ручной работы</h1>
+    <p>Натуральный воск, авторские ароматы и доставка по городу.</p>
+</section>
+
+<section class="features grid-3">
+    <article class="card"><h3>Натуральные материалы</h3><p>Только проверенные компоненты для безопасного горения.</p></article>
+    <article class="card"><h3>Ручная работа</h3><p>Каждая свеча отливается и декорируется вручную.</p></article>
+    <article class="card"><h3>Подарочная упаковка</h3><p>Можно оформить заказ как готовый подарок.</p></article>
+</section>
+
+<section id="products" class="products-section" aria-labelledby="products-heading">
+    <h2 id="products-heading">Каталог</h2>
+    {% if products %}
+    <ul class="product-grid">
+        {% for product in products %}
+            <li>
+                <a class="product-card product-card--link" href="{{ product.get_absolute_url }}">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="" loading="lazy" width="520" height="300">
+                    {% else %}
+                        <div class="image-placeholder" role="img" aria-label="Нет фото">Нет фото</div>
+                    {% endif %}
+                    <h3 class="product-card__title">{{ product.name }}</h3>
+                    <p class="product-card__price">{{ product.price }} ₽</p>
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>Товары скоро появятся.</p>
+    {% endif %}
+</section>
+{% endblock %}

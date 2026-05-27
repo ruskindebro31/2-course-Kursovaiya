@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ product.name }} | Candels{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'catalog/css/catalog.css' %}">
+{% endblock %}
+{% block content %}
+<article class="detail-layout">
+    <figure class="detail-figure">
+        {% if product.image %}
+            <img class="detail-image" src="{{ product.image.url }}" alt="" width="600" height="480" loading="eager">
+        {% else %}
+            <div class="image-placeholder detail-image" role="img" aria-label="Нет фото">Нет фото</div>
+        {% endif %}
+    </figure>
+    <div class="card detail-card">
+        <a class="btn detail-back-btn" href="{% url 'core:home' %}">На главную</a>
+        <h1>{{ product.name }}</h1>
+        <p class="muted">{{ product.category.name }}</p>
+        <p>{{ product.description }}</p>
+        <h3>{{ product.price }} ₽</h3>
+        <form class="detail-actions" method="post" action="{% url 'cart:cart_add' product.id %}">
+            {% csrf_token %}
+            <label for="quantity">Количество</label>
+            <input id="quantity" name="quantity" type="number" min="1" max="99" value="1" required>
+            <input type="hidden" name="override" value="false">
+            <button class="btn" type="submit">Добавить в корзину</button>
+        </form>
+    </div>
+</article>
+{% endblock %}

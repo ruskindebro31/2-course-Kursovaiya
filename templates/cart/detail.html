@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Корзина | Candels{% endblock %}
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'cart/css/cart.css' %}">
+{% endblock %}
+{% block content %}
+<h1>Корзина</h1>
+
+{% if cart|length %}
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Кол-во</th>
+                <th>Цена</th>
+                <th>Сумма</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+                <tr>
+                    <td>{{ item.product.name }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.price }} ₽</td>
+                    <td>{{ item.total_price }} ₽</td>
+                    <td>
+                        <form method="post" action="{% url 'cart:cart_remove' item.product.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="cart-remove-btn">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<h3>Итого: {{ cart.get_total_price }} ₽</h3>
+<div class="cart-actions">
+    <a class="btn" href="{% url 'orders:order_create' %}">Оформить заказ</a>
+</div>
+{% else %}
+<p>Корзина пока пуста.</p>
+{% endif %}
+{% endblock %}

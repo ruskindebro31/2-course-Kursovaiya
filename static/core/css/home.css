@@ -1,0 +1,36 @@
+.hero {
+    padding: clamp(1.5rem, 5vw, 2.5rem) 0;
+}
+.hero h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    line-height: 1.2;
+}
+.hero p {
+    margin: 0;
+    max-width: 42ch;
+    color: var(--muted);
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.features .card h3 {
+    margin-top: 0;
+}
+
+.products-section {
+    margin-top: 2rem;
+    padding-bottom: 1rem;
+}
+
+@media screen and (max-width: 900px) {
+    .grid-3 { grid-template-columns: 1fr; }
+}
+
+@media screen and (max-width: 600px) and (max-height: 900px) {
+    .products-section { margin-top: 1.5rem; }
+}

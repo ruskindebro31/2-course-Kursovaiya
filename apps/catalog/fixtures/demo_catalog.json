@@ -1,0 +1,116 @@
+[
+  {
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+      "name": "Ароматические",
+      "slug": "aromatic"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+      "name": "Декоративные",
+      "slug": "decorative"
+    }
+  },
+  {
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+      "name": "Подарочные наборы",
+      "slug": "gift-sets"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+      "category": 1,
+      "name": "Свеча Ваниль и Корица",
+      "slug": "vanilla-cinnamon-candle",
+      "description": "Теплый сладкий аромат для уютных вечеров.",
+      "price": "890.00",
+      "stock": 24,
+      "is_active": true,
+      "image": "products/vanilla-cinnamon-candle.jpg",
+      "created_at": "2026-04-10T10:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+      "category": 1,
+      "name": "Свеча Лаванда",
+      "slug": "lavender-candle",
+      "description": "Мягкий расслабляющий аромат лаванды.",
+      "price": "790.00",
+      "stock": 18,
+      "is_active": true,
+      "image": "products/lavender-candle.jpg",
+      "created_at": "2026-04-10T10:05:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 3,
+    "fields": {
+      "category": 2,
+      "name": "Свеча Мраморная",
+      "slug": "marble-candle",
+      "description": "Декоративная свеча с мраморной текстурой.",
+      "price": "1150.00",
+      "stock": 12,
+      "is_active": true,
+      "image": "products/marble-candle.jpg",
+      "created_at": "2026-04-10T10:10:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+      "category": 2,
+      "name": "Свеча Геометрия",
+      "slug": "geometry-candle",
+      "description": "Современная форма для минималистичного интерьера.",
+      "price": "990.00",
+      "stock": 16,
+      "is_active": true,
+      "image": "products/geometry-candle.jpg",
+      "created_at": "2026-04-10T10:15:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 5,
+    "fields": {
+      "category": 3,
+      "name": "Набор Уютный вечер",
+      "slug": "cozy-evening-set",
+      "description": "Подарочный набор из трех свечей в фирменной упаковке.",
+      "price": "2490.00",
+      "stock": 9,
+      "is_active": true,
+      "image": "products/cozy-evening-set.jpg",
+      "created_at": "2026-04-10T10:20:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 6,
+    "fields": {
+      "category": 3,
+      "name": "Набор Северные ароматы",
+      "slug": "northern-aromas-set",
+      "description": "Комбинация хвои, цитруса и пряностей.",
+      "price": "2690.00",
+      "stock": 7,
+      "is_active": true,
+      "image": "products/northern-aromas-set.jpg",
+      "created_at": "2026-04-10T10:25:00Z"
+    }
+  }
+]
