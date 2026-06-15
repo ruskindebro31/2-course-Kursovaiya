@@ -1,0 +1,81 @@
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, 'Segoe UI', sans-serif;
+  background: #faf8f5;
+  color: #2c2416;
+}
+
+#root { min-height: 100vh; }
+
+.layout { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e8dfd0;
+  margin-bottom: 1.5rem;
+}
+
+.logo { font-size: 1.5rem; font-weight: 700; text-decoration: none; color: #8b5a2b; }
+
+.header nav { display: flex; gap: 1rem; align-items: center; }
+.header a { color: #5c4a32; text-decoration: none; }
+.header a:hover { color: #8b5a2b; }
+.header button { background: none; border: 1px solid #ccc; padding: 0.3rem 0.8rem; cursor: pointer; border-radius: 4px; }
+
+.badge {
+  background: #c45c26;
+  color: white;
+  border-radius: 50%;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: white;
+  border: 1px solid #e8dfd0;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.card a { text-decoration: none; color: inherit; }
+
+.filters { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.filters input, .filters select { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+
+.auth { max-width: 400px; margin: 0 auto; }
+.auth form { display: flex; flex-direction: column; gap: 0.75rem; }
+.auth input, .auth textarea { padding: 0.6rem; border: 1px solid #ccc; border-radius: 4px; }
+
+.btn, button[type="submit"] {
+  background: #8b5a2b;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-fav { background: none; border: 1px solid #8b5a2b; color: #8b5a2b; margin-top: 0.5rem; }
+
+.pagination { display: flex; gap: 1rem; align-items: center; margin-top: 1.5rem; }
+
+.hero-page { text-align: center; padding: 3rem 1rem; }
+.hero-page h1 { font-size: 2.5rem; color: #8b5a2b; }
+
+.price { font-size: 1.25rem; font-weight: 600; color: #8b5a2b; }
+.error { color: #c0392b; }
+.reviews ul { list-style: none; padding: 0; }
+.reviews li { background: white; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 4px; }

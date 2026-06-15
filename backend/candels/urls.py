@@ -1,21 +1,21 @@
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework.routers import DefaultRouter
-from apps.users.views import UserViewSet
-from apps.candles.views import CandleViewSet
+from rest_framework_simplejwt.views import TokenVerifyView
+
+from apps.candles.views import CandleViewSet, CategoryViewSet
 from apps.orders.views import OrderViewSet
 from apps.cart.views import CartViewSet
 from apps.reviews.views import ReviewViewSet
 from apps.notifications.views import NotificationViewSet
 from apps.chat.views import ChatViewSet, MessageViewSet
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
+from apps.favorites.views import FavoriteViewSet
 
 router = DefaultRouter()
-router.register(r'users', UserViewSet, basename='user')
+router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'candles', CandleViewSet, basename='candle')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'carts', CartViewSet, basename='cart')
@@ -23,11 +23,16 @@ router.register(r'reviews', ReviewViewSet, basename='review')
 router.register(r'notifications', NotificationViewSet, basename='notification')
 router.register(r'chats', ChatViewSet, basename='chat')
 router.register(r'messages', MessageViewSet, basename='message')
+router.register(r'favorites', FavoriteViewSet, basename='favorite')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/', include('users.urls')),
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
