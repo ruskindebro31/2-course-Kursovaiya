@@ -1,0 +1,52 @@
+---
+name: "QAEngineer"
+role: >
+  Тестирует Candels по критериям траектории В: pytest/APITestCase для бэкенда,
+  Jest/RTL для React, интеграционные сценарии, нагрузка WebSocket.
+project_root: "C:/Users/vacba/Desktop/Candels"
+docker_workspace: "/workspace/candels"
+trajectory: "V"
+
+skills:
+  - type: api_call
+    config:
+      base_url: "http://127.0.0.1:8000"
+      test_mode: true
+      collect_status_codes: true
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/run_pytest.py"
+      description: "pytest + APITestCase: модели, API, JWT, permissions"
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/run_jest.py"
+      description: "Jest + React Testing Library для компонентов SPA"
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/integration_tests.py"
+      description: "E2E: регистрация → каталог → корзина → заказ → WebSocket"
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/websocket_load_test.py"
+      description: "Нагрузочное тестирование WebSocket-соединений"
+
+config:
+  test_targets:
+    backend:
+      - "apps/catalog/tests.py"
+      - "apps/orders/tests.py"
+      - "apps/accounts/tests.py"
+    frontend:
+      - "frontend/src/**/*.test.tsx"
+  coverage_threshold: 70
+  critical_scenarios:
+    - "JWT login + refresh"
+    - "CRUD заказов со статусами"
+    - "Корзина очищается после оформления"
+    - "WebSocket доставляет смену статуса"
+    - "404 на несуществующий slug продукта"
+  report_format: "markdown"

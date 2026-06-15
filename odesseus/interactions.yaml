@@ -1,0 +1,174 @@
+---
+interactions:
+  # ── Фаза 1: Backend (траектория В) ──────────────────────────────
+
+  - type: request
+    name: "СтартBackend"
+    agent_from: "Orchestrator"
+    agent_to: "BackendDeveloper"
+    data:
+      task: "Миграция Candels на DRF + JWT + Channels"
+      project_root: "C:/Users/vacba/Desktop/Candels"
+      docker_workspace: "/workspace/candels"
+      requirements:
+        - "REST API для Category, Product, Order, OrderItem"
+        - "JWT: register/login/refresh/profile"
+        - "WebSocket ws/orders/<id>/ для статусов"
+        - "Permissions: guest/user/admin"
+      reference: "МУ_КП_ТРПО.pdf — траектория В, этапы 4-6"
+
+  - type: request
+    name: "СканОшибокПослеBackend"
+    agent_from: "BackendDeveloper"
+    agent_to: "ErrorFixer"
+    data:
+      trigger: "post_backend_build"
+      scan: ["404", "500", "missing_routes", "cors"]
+      paths: ["config/urls.py", "apps/*/urls.py"]
+
+  # ── Фаза 2: Frontend (React SPA) ────────────────────────────────
+
+  - type: request
+    name: "ПередатьAPIКонтракт"
+    agent_from: "BackendDeveloper"
+    agent_to: "FrontendDeveloper"
+    data:
+      openapi_spec: "{backend.openapi_spec}"
+      websocket_url: "ws://127.0.0.1:8000/ws/orders/{id}/"
+      auth: "JWT Bearer localStorage"
+
+  - type: request
+    name: "СканОшибокПослеFrontend"
+    agent_from: "FrontendDeveloper"
+    agent_to: "ErrorFixer"
+    data:
+      trigger: "post_frontend_build"
+      scan: ["404", "cors", "broken_links", "api_mismatch"]
+      paths: ["frontend/src/routes/", "frontend/src/api/"]
+
+  # ── Фаза 3: QA ──────────────────────────────────────────────────
+
+  - type: request
+    name: "ЗапускТестов"
+    agent_from: "Orchestrator"
+    agent_to: "QAEngineer"
+    data:
+      backend_artifact: "{backend.source_code}"
+      frontend_artifact: "{frontend.source_code}"
+      test_plan:
+        - "pytest: catalog, orders, accounts API"
+        - "jest: ProductList, CartPage, CheckoutForm"
+        - "integration: login → order → websocket status"
+        - "load: websocket 50 connections"
+
+  - type: response
+    name: "QAОтчёт"
+    agent_from: "QAEngineer"
+    agent_to: "Orchestrator"
+    data:
+      passed: "{qa.all_passed}"
+      failed_tests: "{qa.failures}"
+      coverage: "{qa.coverage_percent}"
+
+  # ── Фаза 4: DevOps Review (проверяющий) ─────────────────────────
+
+  - type: request
+    name: "РевьюBackend"
+    agent_from: "BackendDeveloper"
+    agent_to: "DevOpsReviewer"
+    data:
+      artifact_type: "backend"
+      files: ["config/settings.py", "config/asgi.py", "requirements.txt"]
+      checks: ["jwt", "channels", "cors", "docker"]
+
+  - type: request
+    name: "РевьюFrontend"
+    agent_from: "FrontendDeveloper"
+    agent_to: "DevOpsReviewer"
+    data:
+      artifact_type: "frontend"
+      files: ["frontend/package.json", "frontend/Dockerfile"]
+      checks: ["react_query", "websocket_client", "env_vars"]
+
+  - type: request
+    name: "РевьюИнфраструктуры"
+    agent_from: "QAEngineer"
+    agent_to: "DevOpsReviewer"
+    data:
+      artifact_type: "infrastructure"
+      files: ["docker-compose.yml", ".env.example"]
+      qa_report: "{qa.summary}"
+
+  - type: response
+    name: "DevOpsЗамечанияBackend"
+    agent_from: "DevOpsReviewer"
+    agent_to: "BackendDeveloper"
+    data:
+      approved: "{review.backend.approved}"
+      issues: "{review.backend.issues}"
+
+  - type: response
+    name: "DevOpsЗамечанияFrontend"
+    agent_from: "DevOpsReviewer"
+    agent_to: "FrontendDeveloper"
+    data:
+      approved: "{review.frontend.approved}"
+      issues: "{review.frontend.issues}"
+
+  # ── Фаза 5: ErrorFixer по результатам QA/Review ─────────────────
+
+  - type: request
+    name: "ИсправитьПоQA"
+    agent_from: "QAEngineer"
+    agent_to: "ErrorFixer"
+    condition: "qa.has_http_errors == true"
+    data:
+      errors: "{qa.http_errors}"
+      auto_fix: true
+
+  - type: request
+    name: "ИсправитьПоDevOps"
+    agent_from: "DevOpsReviewer"
+    agent_to: "ErrorFixer"
+    condition: "review.has_route_issues == true"
+    data:
+      issues: "{review.route_issues}"
+      auto_fix: true
+
+  # ── Финал ───────────────────────────────────────────────────────
+
+  - type: response
+    name: "ФинальныйОтчёт"
+    agent_from: "DevOpsReviewer"
+    agent_to: "Orchestrator"
+    data:
+      backend_approved: "{review.backend.approved}"
+      frontend_approved: "{review.frontend.approved}"
+      qa_passed: "{qa.all_passed}"
+      errors_fixed: "{error_fixer.fixed_count}"
+      summary: "{review.summary}"
+
+routing_rules:
+  - condition: "qa.all_passed == false && qa.http_errors > 0"
+    action: "delegate"
+    target: "ErrorFixer"
+    then: "QAEngineer"
+
+  - condition: "review.backend.approved == false"
+    action: "retry"
+    target: "BackendDeveloper"
+    max_retries: 3
+
+  - condition: "review.frontend.approved == false"
+    action: "retry"
+    target: "FrontendDeveloper"
+    max_retries: 3
+
+  - condition: "error_fixer.unfixable > 0"
+    action: "fallback"
+    config: "odesseus/fallback.yaml"
+    target: "Orchestrator"
+
+  - condition: "review.backend.approved && review.frontend.approved && qa.all_passed"
+    action: "complete"
+    target: "Orchestrator"

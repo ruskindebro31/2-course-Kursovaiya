@@ -1,0 +1,25 @@
+---
+project: "Candels"
+trajectory: "V"
+project_root: "C:/Users/vacba/Desktop/Candels"
+docker_workspace: "/workspace/candels"
+methodology: "МУ_КП_ТРПО — Траектория В (Django REST + React SPA + WebSocket + JWT)"
+
+agents:
+  - file: "odesseus/agents/backend_developer.yaml"
+    name: "BackendDeveloper"
+
+  - file: "odesseus/agents/frontend_developer.yaml"
+    name: "FrontendDeveloper"
+
+  - file: "odesseus/agents/qa_engineer.yaml"
+    name: "QAEngineer"
+
+  - file: "odesseus/agents/devops_reviewer.yaml"
+    name: "DevOpsReviewer"
+
+  - file: "odesseus/agents/error_fixer.yaml"
+    name: "ErrorFixer"
+
+fallback: "odesseus/fallback.yaml"
+interactions: "odesseus/interactions.yaml"

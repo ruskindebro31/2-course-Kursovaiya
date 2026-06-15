@@ -1,0 +1,90 @@
+---
+# Fallback-стратегия для всего пайплайна Candels (траектория В)
+
+global:
+  max_retries_per_agent: 3
+  retry_delay_seconds: 5
+  timeout_seconds: 600
+  on_total_failure: "notify_orchestrator"
+
+stages:
+  backend:
+    on_failure:
+      - action: "retry"
+        agent: "BackendDeveloper"
+        max_retries: 3
+      - action: "delegate"
+        agent: "ErrorFixer"
+        reason: "API 404/500, broken urls.py"
+      - action: "escalate"
+        target: "Orchestrator"
+        message: "Backend не готов после 3 попыток + ErrorFixer"
+
+  frontend:
+    on_failure:
+      - action: "retry"
+        agent: "FrontendDeveloper"
+        max_retries: 3
+      - action: "delegate"
+        agent: "ErrorFixer"
+        reason: "React Router 404, CORS, broken API calls"
+      - action: "fallback_mode"
+        mode: "backend_only_swagger"
+        description: "Показать API через /api/docs без SPA"
+
+  qa:
+    on_failure:
+      - action: "retry"
+        agent: "QAEngineer"
+        max_retries: 2
+      - action: "delegate"
+        agent: "ErrorFixer"
+        reason: "Тесты падают из-за 404/500"
+      - action: "delegate"
+        agent: "BackendDeveloper"
+        condition: "test_category == api"
+      - action: "delegate"
+        agent: "FrontendDeveloper"
+        condition: "test_category == ui"
+
+  devops_review:
+    on_reject:
+      - action: "route_feedback"
+        to: ["BackendDeveloper", "FrontendDeveloper"]
+        filter_by: "artifact_type"
+      - action: "retry_review"
+        agent: "DevOpsReviewer"
+        max_retries: 2
+      - action: "escalate"
+        target: "Orchestrator"
+        condition: "critical_issues > 0"
+
+  error_fixer:
+    on_unfixable:
+      - action: "log"
+        file: "PROJECT_PROBLEMS.md"
+      - action: "notify"
+        target: "Orchestrator"
+        include: ["url", "status_code", "stack_trace"]
+
+recovery_chain:
+  description: "Порядок восстановления при любой ошибке в пайплайне"
+  steps:
+    1: "ErrorFixer сканирует 404/CORS/static"
+    2: "Затронутый агент (Backend/Frontend) повторяет задачу"
+    3: "QAEngineer перезапускает упавшие тесты"
+    4: "DevOpsReviewer финальная проверка"
+    5: "Если всё ещё fail → Orchestrator + запись в PROJECT_PROBLEMS.md"
+
+safe_defaults:
+  api_unavailable: "Вернуть JSON {error: 'service_unavailable', retry_after: 30}"
+  websocket_down: "Fallback на polling GET /api/orders/{id}/ каждые 10 сек"
+  jwt_expired: "Авто-refresh через /api/auth/token/refresh/, иначе redirect /login"
+  cart_after_order: "Очистить session cart после POST /api/orders/ (баг из PROJECT_PROBLEMS.md)"
+
+manual_override:
+  enabled: true
+  commands:
+    - "odesseus run odesseus/scenarios/candels_trajectory_v.yaml --agent ErrorFixer"
+    - "odesseus run odesseus/scenarios/candels_trajectory_v.yaml --from-step qa"
+    - "odesseus run odesseus/scenarios/candels_trajectory_v.yaml --skip DevOpsReviewer"

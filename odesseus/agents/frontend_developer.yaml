@@ -1,0 +1,63 @@
+---
+name: "FrontendDeveloper"
+role: >
+  Разрабатывает React SPA для интернет-магазина Candels: каталог, корзина,
+  оформление заказа, профиль, real-time статусы через WebSocket.
+project_root: "C:/Users/vacba/Desktop/Candels"
+docker_workspace: "/workspace/candels"
+trajectory: "V"
+
+skills:
+  - type: web_search
+    config:
+      sources: ["react.dev", "tanstack.com/query", "axios-http.com"]
+      purpose: "Документация React, React Query, Axios interceptors"
+
+  - type: api_call
+    config:
+      base_url: "http://127.0.0.1:8000/api"
+      verify_contract: true
+      cors_origin: "http://localhost:3000"
+
+  - type: json_parse
+    config:
+      extract_fields: ["endpoints", "models", "pagination", "filters"]
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/react_spa.py"
+      description: "React Router, компоненты каталога/корзины/заказов"
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/react_query_cache.py"
+      description: "React Query: кэш, оптимистичные обновления, пагинация"
+
+  - type: custom_python
+    config:
+      script: "odesseus/skills/websocket_client.py"
+      description: "useWebSocket хук для статусов заказов и комментариев"
+
+config:
+  stack:
+    language: "typescript"
+    framework: "react"
+    router: "react-router-dom"
+    http: "axios"
+    cache: "react-query"
+    styling: "tailwindcss"
+  frontend_dir: "frontend/"
+  components:
+    - "ProductList"
+    - "ProductDetail"
+    - "CartPage"
+    - "CheckoutForm"
+    - "OrderStatus"
+    - "LoginRegister"
+    - "CommentThread"
+    - "FavoritesList"
+  features:
+    - "JWT в localStorage + auto refresh"
+    - "Оптимистичное добавление в избранное"
+    - "Клиентская пагинация, фильтрация, поиск"
+    - "Real-time обновление статуса заказа"

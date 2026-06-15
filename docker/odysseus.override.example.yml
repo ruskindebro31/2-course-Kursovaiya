@@ -1,0 +1,11 @@
+# Пример: добавьте в docker-compose.yml Odysseus (рядом с сервисом odysseus)
+#
+# volumes:
+#   - C:/Users/vacba/Desktop/Candels:/workspace/candels
+#
+# В Agent → Workspace выбирайте: /workspace/candels
+
+services:
+  odysseus:
+    volumes:
+      - C:/Users/vacba/Desktop/Candels:/workspace/candels:rw
