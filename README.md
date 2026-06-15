@@ -7,7 +7,16 @@
 ```
 backend/     — Django REST API
 frontend/    — React SPA (Vite)
+docs/        — документация курсового проекта (МУ, траектория В)
 ```
+
+## Документация
+
+Полный комплект: [docs/README.md](docs/README.md)
+
+- [Задание на КП](docs/ЗАДАНИЕ_КП.md) — Приложение 1 (Рашевский Р.Р.)
+- [Пояснительная записка](docs/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md)
+- [API](docs/API_SPECIFICATION.md) · [ER](docs/ER_DIAGRAM.md) · [Архитектура](docs/ARCHITECTURE.md)
 
 ## Запуск
 
