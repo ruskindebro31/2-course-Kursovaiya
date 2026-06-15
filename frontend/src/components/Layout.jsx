@@ -12,8 +12,10 @@ export default function Layout() {
         <Link to="/" className="logo">Candels</Link>
         <nav>
           <Link to="/catalog">Каталог</Link>
+          <Link to="/my-candles">Мои свечи</Link>
           <Link to="/favorites">Избранное</Link>
           <Link to="/cart">Корзина</Link>
+          <Link to="/orders">Заказы</Link>
           {isAuth ? (
             <>
               <Link to="/profile">Профиль</Link>

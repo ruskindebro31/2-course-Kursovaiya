@@ -11,6 +11,9 @@ import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
 import CartPage from './pages/CartPage';
 import FavoritesPage from './pages/FavoritesPage';
+import MyCandlesPage from './pages/MyCandlesPage';
+import CandleFormPage from './pages/CandleFormPage';
+import OrdersPage from './pages/OrdersPage';
 import './App.css';
 
 const queryClient = new QueryClient({
@@ -26,10 +29,14 @@ export default function App() {
             <Route element={<Layout />}>
               <Route index element={<HomePage />} />
               <Route path="catalog" element={<CatalogPage />} />
+              <Route path="candles/new" element={<CandleFormPage />} />
+              <Route path="candles/:id/edit" element={<CandleFormPage />} />
               <Route path="candles/:id" element={<CandleDetailPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />
               <Route path="cart" element={<CartPage />} />
+              <Route path="orders" element={<OrdersPage />} />
+              <Route path="my-candles" element={<ProtectedRoute><MyCandlesPage /></ProtectedRoute>} />
               <Route path="favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
               <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
             </Route>

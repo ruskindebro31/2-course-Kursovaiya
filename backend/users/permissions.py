@@ -10,8 +10,15 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if request.method in permissions.SAFE_METHODS:
             return True
+        if request.user and request.user.is_staff:
+            return True
         if hasattr(obj, 'user'):
             return obj.user == request.user
         if hasattr(obj, 'author'):
             return obj.author == request.user
         return False
+
+
+class IsAuthorOrReadOnly(IsOwnerOrReadOnly):
+    """Алиас по терминологии МУ (автор публикации)."""
+    pass

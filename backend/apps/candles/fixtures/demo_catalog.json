@@ -1,0 +1,64 @@
+[
+  {
+    "model": "candles.category",
+    "pk": 1,
+    "fields": {
+      "name": "Ароматические",
+      "slug": "aromatic",
+      "description": "Свечи с натуральными ароматами",
+      "is_active": true
+    }
+  },
+  {
+    "model": "candles.category",
+    "pk": 2,
+    "fields": {
+      "name": "Декоративные",
+      "slug": "decorative",
+      "description": "Свечи для интерьера",
+      "is_active": true
+    }
+  },
+  {
+    "model": "candles.candle",
+    "pk": 1,
+    "fields": {
+      "name": "Лаванда и мёд",
+      "description": "Успокаивающий аромат лаванды с нотами мёда",
+      "price": "890.00",
+      "category": 1,
+      "author": null,
+      "is_published": true,
+      "created_at": "2026-01-15T10:00:00Z",
+      "updated_at": "2026-01-15T10:00:00Z"
+    }
+  },
+  {
+    "model": "candles.candle",
+    "pk": 2,
+    "fields": {
+      "name": "Ваниль и корица",
+      "description": "Тёплый зимний аромат",
+      "price": "750.00",
+      "category": 1,
+      "author": null,
+      "is_published": true,
+      "created_at": "2026-01-16T10:00:00Z",
+      "updated_at": "2026-01-16T10:00:00Z"
+    }
+  },
+  {
+    "model": "candles.candle",
+    "pk": 3,
+    "fields": {
+      "name": "Мраморная свеча",
+      "description": "Декоративная свеча ручной литьё",
+      "price": "1200.00",
+      "category": 2,
+      "author": null,
+      "is_published": true,
+      "created_at": "2026-01-17T10:00:00Z",
+      "updated_at": "2026-01-17T10:00:00Z"
+    }
+  }
+]

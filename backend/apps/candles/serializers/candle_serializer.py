@@ -7,15 +7,23 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ('id', 'name', 'description', 'candle_count')
+        fields = ('id', 'name', 'slug', 'description', 'is_active', 'candle_count')
 
 
 class CandleSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
+    author_name = serializers.CharField(source='author.username', read_only=True, default=None)
 
     class Meta:
         model = Candle
         fields = (
             'id', 'name', 'description', 'price', 'category', 'category_name',
-            'image', 'created_at', 'updated_at',
+            'author', 'author_name', 'image', 'is_published', 'created_at', 'updated_at',
         )
+        read_only_fields = ('author',)
+
+
+class CandleCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Candle
+        fields = ('name', 'description', 'price', 'category', 'image', 'is_published')

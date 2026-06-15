@@ -19,6 +19,7 @@ python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
+python manage.py loaddata demo_catalog
 python manage.py runserver
 ```
 
@@ -37,9 +38,27 @@ npm run dev
 
 Скопируйте `.env.example` в `.env` при необходимости.
 
+## Основные возможности
+
+- Каталог свечей: пагинация, поиск, фильтр по категориям
+- JWT: регистрация, вход, обновление токена, профиль
+- Свои публикации (свечи): создание, редактирование, удаление
+- Избранное и отзывы с оптимистичным обновлением UI
+- WebSocket: уведомления и отзывы в реальном времени
+- Корзина и оформление заказа
+
 ## Тесты
 
 ```bash
 cd backend && python -m pytest -v
 cd frontend && npm test
 ```
+
+## Статистика разработки
+
+| Метрика | Значение |
+|---------|----------|
+| Всего коммитов | 5+ |
+| Репозиторий | https://github.com/ruskindebro31/2-course-Kursovaiya |
+| Траектория | В (Django REST + React + JWT + WebSocket) |
+| Стек | Django 4.2, DRF, Channels, React 19, Vite, TanStack Query |
