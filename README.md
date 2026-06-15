@@ -14,9 +14,10 @@ docs/        — документация курсового проекта (М�
 
 Полный комплект: [docs/README.md](docs/README.md)
 
-- [Задание на КП](docs/ЗАДАНИЕ_КП.md) — Приложение 1 (Рашевский Р.Р.)
-- [Пояснительная записка](docs/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md)
-- [API](docs/API_SPECIFICATION.md) · [ER](docs/ER_DIAGRAM.md) · [Архитектура](docs/ARCHITECTURE.md)
+**DOCX (ГОСТ 7.32-2017):** [docs/docx/](docs/docx/)
+
+- [Задание на КП](docs/docx/ЗАДАНИЕ_КП.docx) · [Пояснительная записка](docs/docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx)
+- [API](docs/docx/API_SPECIFICATION.docx) · [ER](docs/docx/ER_DIAGRAM.docx) · [Архитектура](docs/docx/ARCHITECTURE.docx)
 
 ## Запуск
 
