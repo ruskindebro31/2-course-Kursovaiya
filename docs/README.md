@@ -2,22 +2,18 @@
 
 Траектория **В**: Django REST + React SPA + JWT + WebSocket.
 
-Оформление: **ГОСТ 7.32-2017**, **ГОСТ Р 7.0.97-2016** (Times New Roman 14 пт, интервал 1,5, поля 30/15/20/20 мм).
-
-## Документы (DOCX)
+## Пояснительная записка
 
 | Документ | Файл |
 |----------|------|
-| Задание на КП (Приложение 1) | [docx/ЗАДАНИЕ_КП.docx](docx/ЗАДАНИЕ_КП.docx) |
-| Пояснительная записка | [docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx](docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx) |
-| Спецификация REST API | [docx/API_SPECIFICATION.docx](docx/API_SPECIFICATION.docx) |
-| ER-диаграмма | [docx/ER_DIAGRAM.docx](docx/ER_DIAGRAM.docx) |
-| Архитектура системы | [docx/ARCHITECTURE.docx](docx/ARCHITECTURE.docx) |
-| JWT-аутентификация | [docx/JWT_AUTH_DESIGN.docx](docx/JWT_AUTH_DESIGN.docx) |
-| WebSocket и real-time | [docx/WEBSOCKET_SETUP.docx](docx/WEBSOCKET_SETUP.docx) |
-| Отчёт о тестировании | [docx/TESTING_REPORT.docx](docx/TESTING_REPORT.docx) |
-| Руководство пользователя | [docx/USER_GUIDE.docx](docx/USER_GUIDE.docx) |
-| Доменная модель | [docx/DOMAIN_MODEL.docx](docx/DOMAIN_MODEL.docx) |
-| Use Case диаграмма | [docx/USE_CASE.docx](docx/USE_CASE.docx) |
+| Пояснительная записка (~60 стр., ГОСТ) | [ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md](ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md) |
+| Скриншоты (Приложение Б) | [images/screenshots/](images/screenshots/) |
 
-Пересборка DOCX из локальных исходников: `pip install -r docs/requirements-docx.txt` → `python docs/generate_docx.py`
+Оформление для сдачи: откройте `ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md` в Word или скопируйте в новый документ с параметрами ГОСТ (TNR 14, интервал 1,5, поля 30/10/20/20 мм).
+
+## Пересборка
+
+```bash
+python docs/build_full_report.py      # → ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md
+python docs/generate_screenshots.py   # → images/screenshots/
+```

@@ -12,12 +12,7 @@ docs/        — документация курсового проекта (М�
 
 ## Документация
 
-Полный комплект: [docs/README.md](docs/README.md)
-
-**DOCX (ГОСТ 7.32-2017):** [docs/docx/](docs/docx/)
-
-- [Задание на КП](docs/docx/ЗАДАНИЕ_КП.docx) · [Пояснительная записка](docs/docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx)
-- [API](docs/docx/API_SPECIFICATION.docx) · [ER](docs/docx/ER_DIAGRAM.docx) · [Архитектура](docs/docx/ARCHITECTURE.docx)
+Пояснительная записка: [docs/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md](docs/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md) (~60 стр., траектория В, ГОСТ)
 
 ## Запуск
 
