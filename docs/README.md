@@ -6,14 +6,16 @@
 
 | Документ | Файл |
 |----------|------|
-| Пояснительная записка (~60 стр., ГОСТ) | [ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md](ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md) |
+| Пояснительная записка (~60 стр., ГОСТ) | [docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx](docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx) |
 | Скриншоты (Приложение Б) | [images/screenshots/](images/screenshots/) |
-
-Оформление для сдачи: откройте `ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md` в Word или скопируйте в новый документ с параметрами ГОСТ (TNR 14, интервал 1,5, поля 30/10/20/20 мм).
 
 ## Пересборка
 
 ```bash
-python docs/build_full_report.py      # → ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md
-python docs/generate_screenshots.py   # → images/screenshots/
+pip install -r docs/requirements-docx.txt
+python docs/build_full_report.py
+python docs/generate_docx.py
+python docs/generate_screenshots.py
 ```
+
+Исходник MD (`ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md`) генерируется локально и не публикуется в репозиторий.

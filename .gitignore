@@ -33,9 +33,7 @@ Thumbs.db
 # Logs
 *.log
 
-# Документация: пояснительная записка в Markdown на GitHub
+# Документация: MD локально, DOCX на GitHub
 docs/*.md
 !docs/README.md
-!docs/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md
-docs/docx/
 docs/_mk_snippets.py
