@@ -18,4 +18,4 @@ python docs/generate_docx.py
 python docs/generate_screenshots.py
 ```
 
-Исходник MD (`ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md`) генерируется локально и не публикуется в репозиторий.
+Результат: `docs/docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx` и копия на рабочем столе `ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА_Candels.docx`. Скрипт проверяет открытие в Microsoft Word.

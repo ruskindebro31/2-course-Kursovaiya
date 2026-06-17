@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import re
+import shutil
 import sys
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from docx.shared import Cm, Mm, Pt, RGBColor
 DOCS = Path(__file__).resolve().parent
 MD_PATH = DOCS / "ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md"
 OUT_PATH = DOCS / "docx" / "ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx"
+DESKTOP_COPY = Path.home() / "Desktop" / "ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА_Candels.docx"
 
 FONT = "Times New Roman"
 SIZE = Pt(14)
@@ -58,6 +60,14 @@ def _field_elements(instr: str) -> list:
     return [begin, text, sep, end]
 
 
+def set_run_font(run, *, size=None, name=None, bold=False) -> None:
+    run.font.name = name or FONT
+    run.font.size = size or SIZE
+    run.font.bold = bold
+    rpr = run._element.get_or_add_rPr()
+    rpr.rFonts.set(qn("w:eastAsia"), name or FONT)
+
+
 def fmt_para(p, *, center=False, indent=True, code=False) -> None:
     f = p.paragraph_format
     f.line_spacing_rule = WD_LINE_SPACING.MULTIPLE
@@ -75,28 +85,28 @@ def fmt_para(p, *, center=False, indent=True, code=False) -> None:
         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         f.first_line_indent = INDENT if indent else Cm(0)
     for r in p.runs:
-        r.font.name = FONT
-        r.font.size = SIZE_CODE if code else SIZE
-        r._element.rPr.rFonts.set(qn("w:eastAsia"), FONT)
+        set_run_font(r, size=SIZE_CODE if code else SIZE)
+
+
+def clean_text(text: str) -> str:
+    """Убираем emoji и прочие символы, из‑за которых Word может ругаться."""
+    return text.replace("✅", "Выполнено").replace("❌", "Не выполнено")
 
 
 def add_text(p, text: str, *, bold=False, code=False) -> None:
+    text = clean_text(text)
     for part in re.split(r"(\*\*[^*]+\*\*|`[^`]+`)", text):
         if not part:
             continue
         if part.startswith("**") and part.endswith("**"):
             r = p.add_run(part[2:-2])
-            r.bold = True
+            set_run_font(r, bold=True)
         elif part.startswith("`") and part.endswith("`"):
             r = p.add_run(part[1:-1])
-            r.font.name = "Courier New"
-            r.font.size = SIZE_CODE
+            set_run_font(r, name="Courier New", size=SIZE_CODE)
         else:
             r = p.add_run(part)
-            r.bold = bold
-        r.font.name = FONT if not (part.startswith("`")) else "Courier New"
-        if not part.startswith("`"):
-            r.font.size = SIZE_CODE if code else SIZE
+            set_run_font(r, bold=bold, size=SIZE_CODE if code else SIZE)
 
 
 def title_page(doc: Document) -> None:
@@ -180,10 +190,8 @@ def add_table(doc: Document, rows: list[list[str]]) -> None:
             cell = t.rows[i].cells[j]
             cell.text = ""
             p = cell.paragraphs[0]
-            r = p.add_run(row[j] if j < len(row) else "")
-            r.font.name = FONT
-            r.font.size = Pt(12)
-            r.bold = i == 0
+            r = p.add_run(clean_text(row[j] if j < len(row) else ""))
+            set_run_font(r, size=Pt(12), bold=i == 0)
     doc.add_paragraph()
 
 
@@ -285,14 +293,45 @@ def convert(md_path: Path, out_path: Path) -> None:
     doc.save(out_path)
 
 
+def verify_word_opens(path: Path) -> tuple[bool, str]:
+    try:
+        import win32com.client  # type: ignore
+    except ImportError:
+        Document(path)
+        return True, "python-docx: OK"
+
+    word = None
+    doc = None
+    try:
+        word = win32com.client.Dispatch("Word.Application")
+        word.Visible = False
+        doc = word.Documents.Open(str(path.resolve()))
+        pages = doc.ComputeStatistics(2)
+        return True, f"Microsoft Word: OK ({pages} стр.)"
+    except Exception as exc:
+        return False, str(exc)
+    finally:
+        if doc is not None:
+            doc.Close(False)
+        if word is not None:
+            word.Quit()
+
+
 def main() -> int:
     if not MD_PATH.exists():
         print("Сначала: python docs/build_full_report.py", file=sys.stderr)
         return 1
     convert(MD_PATH, OUT_PATH)
-    # проверка: файл открывается без ошибок
-    Document(OUT_PATH)
-    print(f"OK: {OUT_PATH} ({OUT_PATH.stat().st_size // 1024} KB)")
+    shutil.copy2(OUT_PATH, DESKTOP_COPY)
+
+    ok, msg = verify_word_opens(OUT_PATH)
+    if not ok:
+        print(f"ОШИБКА Word: {msg}", file=sys.stderr)
+        return 1
+
+    print(f"OK: {OUT_PATH.resolve()}")
+    print(f"Копия: {DESKTOP_COPY.resolve()}")
+    print(f"Проверка: {msg} ({OUT_PATH.stat().st_size // 1024} KB)")
     return 0
 
 
