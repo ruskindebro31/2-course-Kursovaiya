@@ -24,8 +24,8 @@ docs/        — документация курсового проекта (М�
 
 ```bash
 cd backend
-py -3.13 -m venv venv313
-venv313\Scripts\activate
+py -3.13 -m venv venv
+venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py loaddata demo_catalog
@@ -39,7 +39,7 @@ python manage.py runserver
 runserver.bat
 ```
 
-> Если раньше использовался `venv` на Python 3.14 — удалите папку `venv` и создайте `venv313` как выше. Иначе админ-панель выдаёт ошибку `'super' object has no attribute 'dicts'`.
+> **Важно:** не используйте Python 3.14. При ошибке `'super' object has no attribute 'dicts'` удалите папку `venv` и выполните `py -3.13 -m venv venv` заново.
 
 - API: http://127.0.0.1:8000/api/
 - Swagger: http://127.0.0.1:8000/api/docs/
