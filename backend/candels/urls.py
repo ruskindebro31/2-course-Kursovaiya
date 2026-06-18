@@ -19,6 +19,13 @@ admin.site.site_header = 'Candels — администрирование'
 admin.site.site_title = 'Candels Admin'
 admin.site.index_title = 'Управление интернет-магазином свечей'
 
+try:
+    from rest_framework_simplejwt.token_blacklist.models import BlacklistedToken, OutstandingToken
+    admin.site.unregister(BlacklistedToken)
+    admin.site.unregister(OutstandingToken)
+except admin.sites.NotRegistered:
+    pass
+
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'candles', CandleViewSet, basename='candle')

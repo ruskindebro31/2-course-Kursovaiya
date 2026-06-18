@@ -33,6 +33,12 @@ python manage.py seed_demo_catalog
 python manage.py runserver
 ```
 
+Или на Windows одной командой (сам пересоздаст venv при Python 3.14):
+
+```bash
+runserver.bat
+```
+
 > Если раньше использовался `venv` на Python 3.14 — удалите папку `venv` и создайте `venv313` как выше. Иначе админ-панель выдаёт ошибку `'super' object has no attribute 'dicts'`.
 
 - API: http://127.0.0.1:8000/api/
@@ -54,7 +60,7 @@ npm run dev
 
 ```bash
 cd backend
-venv313\Scripts\activate
+venv\Scripts\activate
 python manage.py createsuperuser
 ```
 
