@@ -23,10 +23,16 @@ export default function ProfilePage() {
     <section>
       <h1>Профиль</h1>
       {user && <p>{user.first_name} {user.last_name} ({user.email})</p>}
-      <form onSubmit={handleSave}>
-        <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="О себе" />
-        <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="Телефон" />
-        <button type="submit">Сохранить</button>
+      <form className="stack-form profile-form" onSubmit={handleSave}>
+        <label className="field-label">
+          О себе
+          <textarea value={form.bio} onChange={(e) => setForm({ ...form, bio: e.target.value })} placeholder="Расскажите о себе" rows={4} />
+        </label>
+        <label className="field-label">
+          Телефон
+          <input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} placeholder="+7 ..." />
+        </label>
+        <button type="submit" className="btn">Сохранить</button>
       </form>
       {saved && <p>Сохранено!</p>}
     </section>

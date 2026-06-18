@@ -16,6 +16,8 @@ docs/        — документация курсового проекта (М�
 
 ## Запуск
 
+База данных по умолчанию — **SQLite** (`backend/db.sqlite3`). PostgreSQL подключается только при заданной переменной `POSTGRES_HOST`.
+
 ### Backend
 
 ```bash
@@ -25,6 +27,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py loaddata demo_catalog
+python manage.py seed_demo_catalog
 python manage.py runserver
 ```
 
@@ -63,7 +66,8 @@ cd frontend && npm test
 
 | Метрика | Значение |
 |---------|----------|
-| Всего коммитов | 5+ |
+| Всего коммитов | 14 |
+| Период разработки | 27.05.2026 — 17.06.2026 |
 | Репозиторий | https://github.com/ruskindebro31/2-course-Kursovaiya |
 | Траектория | В (Django REST + React + JWT + WebSocket) |
 | Стек | Django 4.2, DRF, Channels, React 19, Vite, TanStack Query |

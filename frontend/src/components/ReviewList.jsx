@@ -10,7 +10,6 @@ export default function ReviewList({ candleId }) {
   const queryClient = useQueryClient();
   const [text, setText] = useState('');
   const [rating, setRating] = useState(5);
-  const [liveReviews, setLiveReviews] = useState([]);
 
   const { data } = useQuery({
     queryKey: ['reviews', candleId],
@@ -21,19 +20,21 @@ export default function ReviewList({ candleId }) {
     const ws = new WebSocket(`${WS_BASE}/ws/reviews/${candleId}/`);
     ws.onmessage = (event) => {
       const payload = JSON.parse(event.data);
-      if (payload.type === 'review') {
-        setLiveReviews((prev) => {
-          if (prev.some((r) => r.id === payload.review.id)) return prev;
-          return [...prev, payload.review];
-        });
-      }
+      if (payload.type !== 'review') return;
+      queryClient.setQueryData(['reviews', candleId], (old) => {
+        const list = old || [];
+        if (list.some((r) => r.id === payload.review.id)) return old;
+        return [...list, payload.review];
+      });
     };
     return () => ws.close();
-  }, [candleId]);
+  }, [candleId, queryClient]);
 
   const mutation = useMutation({
     mutationFn: (body) => api.post('reviews/', { candle: candleId, ...body }),
     onMutate: async (body) => {
+      await queryClient.cancelQueries({ queryKey: ['reviews', candleId] });
+      const previous = queryClient.getQueryData(['reviews', candleId]);
       const optimistic = {
         id: `opt-${Date.now()}`,
         user: 'Вы',
@@ -41,25 +42,27 @@ export default function ReviewList({ candleId }) {
         comment: body.comment,
         created_at: new Date().toISOString(),
       };
-      setLiveReviews((prev) => [...prev, optimistic]);
+      queryClient.setQueryData(['reviews', candleId], [...(previous || []), optimistic]);
       setText('');
-      return { optimistic };
+      return { previous };
     },
-    onError: (_e, _b, ctx) => {
-      if (ctx?.optimistic) {
-        setLiveReviews((prev) => prev.filter((r) => r.id !== ctx.optimistic.id));
+    onError: (_error, _body, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(['reviews', candleId], context.previous);
       }
     },
-    onSettled: () => queryClient.invalidateQueries({ queryKey: ['reviews', candleId] }),
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['reviews', candleId] });
+    },
   });
 
-  const all = [...(data || []), ...liveReviews.filter((lr) => !(data || []).some((r) => r.id === lr.id))];
+  const reviews = data || [];
 
   return (
     <section className="reviews">
       <h3>Отзывы</h3>
       <ul>
-        {all.map((r) => (
+        {reviews.map((r) => (
           <li key={r.id}>
             <strong>{r.user}</strong> — {r.rating}★
             <p>{r.comment}</p>
@@ -67,12 +70,20 @@ export default function ReviewList({ candleId }) {
         ))}
       </ul>
       {isAuth && (
-        <form onSubmit={(e) => { e.preventDefault(); mutation.mutate({ comment: text, rating: Number(rating) }); }}>
-          <select value={rating} onChange={(e) => setRating(e.target.value)}>
-            {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n}</option>)}
-          </select>
-          <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Ваш отзыв" required />
-          <button type="submit">Отправить</button>
+        <form className="stack-form review-form" onSubmit={(e) => { e.preventDefault(); mutation.mutate({ comment: text, rating: Number(rating) }); }}>
+          <label className="field-label">
+            Оценка
+            <select value={rating} onChange={(e) => setRating(e.target.value)}>
+              {[5, 4, 3, 2, 1].map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </label>
+          <label className="field-label">
+            Комментарий
+            <textarea value={text} onChange={(e) => setText(e.target.value)} placeholder="Ваш отзыв" required rows={3} />
+          </label>
+          <button type="submit" className="btn" disabled={mutation.isPending}>
+            {mutation.isPending ? 'Отправка...' : 'Отправить'}
+          </button>
         </form>
       )}
     </section>

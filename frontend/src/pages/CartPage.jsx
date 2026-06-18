@@ -37,27 +37,34 @@ function CartContent() {
   };
 
   return (
-    <section>
+    <section className="cart-page">
       <h1>Корзина</h1>
       {items.length === 0 ? <p>Корзина пуста</p> : (
         <>
-          <ul>
+          <ul className="cart-list">
             {items.map((item) => (
-              <li key={item.id}>
-                {item.name} × {item.qty} — {Number(item.price) * item.qty} ₽
-                <button type="button" onClick={() => removeItem(item.id)}>Удалить</button>
+              <li key={item.id} className="cart-item">
+                <span>{item.name} × {item.qty} — {Number(item.price) * item.qty} ₽</span>
+                <button type="button" className="btn-secondary" onClick={() => removeItem(item.id)}>Удалить</button>
               </li>
             ))}
           </ul>
-          <p>Итого: {total()} ₽</p>
+          <p className="cart-total">Итого: {total()} ₽</p>
           {error && <p className="error">{error}</p>}
-          <button type="button" className="btn" onClick={checkout} disabled={loading}>
-            {loading ? 'Оформление...' : 'Оформить заказ'}
-          </button>
-          <button type="button" onClick={clear}>Очистить</button>
+          <div className="stack-actions">
+            <button type="button" className="btn" onClick={checkout} disabled={loading}>
+              {loading ? 'Оформление...' : 'Оформить заказ'}
+            </button>
+            <button type="button" className="btn-secondary" onClick={clear}>Очистить</button>
+            <Link to="/catalog" className="btn">Продолжить покупки</Link>
+          </div>
         </>
       )}
-      <Link to="/catalog" className="btn">Продолжить покупки</Link>
+      {items.length === 0 && (
+        <div className="stack-actions">
+          <Link to="/catalog" className="btn">Продолжить покупки</Link>
+        </div>
+      )}
     </section>
   );
 }

@@ -1,10 +1,12 @@
 import { Link, Outlet } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import useNotifications from '../hooks/useNotifications';
+import { useCartStore } from '../store/cartStore';
 
 export default function Layout() {
   const { isAuth, user, logout } = useAuth();
   const notifications = useNotifications(user?.id);
+  const cartCount = useCartStore((s) => s.items.reduce((sum, item) => sum + item.qty, 0));
 
   return (
     <div className="layout">
@@ -14,7 +16,10 @@ export default function Layout() {
           <Link to="/catalog">Каталог</Link>
           <Link to="/my-candles">Мои свечи</Link>
           <Link to="/favorites">Избранное</Link>
-          <Link to="/cart">Корзина</Link>
+          <Link to="/cart">
+            Корзина
+            {cartCount > 0 && <span className="badge">{cartCount}</span>}
+          </Link>
           <Link to="/orders">Заказы</Link>
           {isAuth ? (
             <>

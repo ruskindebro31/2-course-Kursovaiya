@@ -15,10 +15,25 @@ class Category(models.Model):
 
 
 class Candle(models.Model):
+    SEASON_SPRING = 'spring'
+    SEASON_SUMMER = 'summer'
+    SEASON_HOLIDAY = 'holiday'
+    SEASON_CHOICES = [
+        (SEASON_SPRING, 'Весенние'),
+        (SEASON_SUMMER, 'Летние'),
+        (SEASON_HOLIDAY, 'Праздничные'),
+    ]
+
     name = models.CharField(max_length=200, db_index=True)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name='candles')
+    season = models.CharField(
+        max_length=20,
+        choices=SEASON_CHOICES,
+        default=SEASON_SPRING,
+        db_index=True,
+    )
     author = models.ForeignKey(
         'users.User',
         on_delete=models.SET_NULL,

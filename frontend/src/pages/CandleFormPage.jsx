@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
+import { mediaUrl } from '../utils/mediaUrl';
 import ProtectedRoute from '../components/ProtectedRoute';
 
 function CandleForm() {
@@ -11,6 +12,8 @@ function CandleForm() {
   const [form, setForm] = useState({
     name: '', description: '', price: '', category: '', is_published: true,
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
   const [error, setError] = useState('');
 
   const { data: categories } = useQuery({
@@ -29,13 +32,34 @@ function CandleForm() {
         category: c.category,
         is_published: c.is_published,
       });
+      setImagePreview(mediaUrl(c.image));
     });
   }, [id, isEdit]);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0];
+    setImageFile(file || null);
+    setImagePreview(file ? URL.createObjectURL(file) : imagePreview);
+  };
+
+  const buildPayload = () => {
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('name', form.name);
+      formData.append('description', form.description);
+      formData.append('price', form.price);
+      formData.append('category', form.category);
+      formData.append('is_published', form.is_published);
+      formData.append('image', imageFile);
+      return formData;
+    }
+    return { ...form, price: Number(form.price), category: Number(form.category) };
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    const payload = { ...form, price: Number(form.price), category: Number(form.category) };
+    const payload = buildPayload();
     try {
       if (isEdit) {
         await api.patch(`candles/${id}/`, payload);
@@ -63,6 +87,11 @@ function CandleForm() {
           <input type="checkbox" checked={form.is_published} onChange={(e) => setForm({ ...form, is_published: e.target.checked })} />
           Опубликовано
         </label>
+        <label className="file-label">
+          Фото свечи
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+        </label>
+        {imagePreview && <img className="form-preview" src={imagePreview} alt="Превью" />}
         {error && <p className="error">{error}</p>}
         <button type="submit">Сохранить</button>
       </form>

@@ -13,17 +13,27 @@ class CategorySerializer(serializers.ModelSerializer):
 class CandleSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     author_name = serializers.CharField(source='author.username', read_only=True, default=None)
+    image = serializers.SerializerMethodField()
 
     class Meta:
         model = Candle
         fields = (
             'id', 'name', 'description', 'price', 'category', 'category_name',
-            'author', 'author_name', 'image', 'is_published', 'created_at', 'updated_at',
+            'season', 'author', 'author_name', 'image', 'is_published', 'created_at', 'updated_at',
         )
         read_only_fields = ('author',)
+
+    def get_image(self, obj):
+        if not obj.image:
+            return None
+        request = self.context.get('request')
+        url = obj.image.url
+        if request is not None:
+            return request.build_absolute_uri(url)
+        return url
 
 
 class CandleCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candle
-        fields = ('name', 'description', 'price', 'category', 'image', 'is_published')
+        fields = ('name', 'description', 'price', 'category', 'season', 'image', 'is_published')

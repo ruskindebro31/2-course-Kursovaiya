@@ -21,7 +21,7 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
 class CandleViewSet(viewsets.ModelViewSet):
     queryset = Candle.objects.filter(is_published=True).select_related('category', 'author')
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ('category', 'price')
+    filterset_fields = ('category', 'price', 'season')
     search_fields = ('name', 'description')
     ordering_fields = ('price', 'created_at', 'name')
 
@@ -52,14 +52,25 @@ class CandleViewSet(viewsets.ModelViewSet):
         serializer = CandleCreateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         candle = serializer.save(author=request.user)
-        return Response(CandleSerializer(candle).data, status=201)
+        return Response(
+            CandleSerializer(candle, context={'request': request}).data,
+            status=201,
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = CandleCreateSerializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        candle = serializer.save()
+        return Response(CandleSerializer(candle, context={'request': request}).data)
 
     @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
     def mine(self, request):
         candles = self.queryset.filter(author=request.user)
         page = self.paginate_queryset(candles)
         if page is not None:
-            serializer = CandleSerializer(page, many=True)
+            serializer = CandleSerializer(page, many=True, context={'request': request})
             return self.get_paginated_response(serializer.data)
-        serializer = CandleSerializer(candles, many=True)
+        serializer = CandleSerializer(candles, many=True, context={'request': request})
         return Response(serializer.data)

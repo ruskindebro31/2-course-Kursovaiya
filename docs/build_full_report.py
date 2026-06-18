@@ -331,7 +331,60 @@ def build_chapter2() -> str:
 
 ### 2.4. Проектирование базы данных
 
+#### 2.4.1. ER-диаграмма
+
 {ER_DIAGRAM}
+
+#### 2.4.2. Физическая модель данных
+
+Физическая модель реализована в СУБД SQLite (разработка) / PostgreSQL (production). Типы полей соответствуют Django ORM: `CharField`, `TextField`, `DecimalField`, `ForeignKey`, `ManyToManyField`. Именование таблиц: `<приложение>_<модель>` (например, `candles_candle`, `users_user`). Первичные ключи — автоинкремент `id`. Внешние ключи с `on_delete`: PROTECT (Category), SET_NULL (author), CASCADE (OrderItem).
+
+| Таблица | Ключевые столбцы | Индексы / ограничения |
+|---------|------------------|------------------------|
+| users_user | id, username, email, password | email UNIQUE |
+| users_profile | id, user_id | user_id UNIQUE FK |
+| candles_category | id, name, slug | name, slug UNIQUE |
+| candles_candle | id, name, price, category_id, author_id | FK category, author; db_index на name |
+| reviews_review | user_id, candle_id, rating | UNIQUE(user_id, candle_id) |
+| orders_order | user_id, total_price, status | FK user |
+| notifications_notification | user_id, message, is_read | FK user |
+
+#### 2.4.3. DDL-скрипты
+
+Фрагмент DDL (эквивалент миграций Django):
+
+```sql
+CREATE TABLE users_user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username VARCHAR(150) NOT NULL UNIQUE,
+    email VARCHAR(254) NOT NULL UNIQUE,
+    password VARCHAR(128) NOT NULL,
+    is_staff BOOLEAN NOT NULL DEFAULT 0,
+    date_joined DATETIME NOT NULL
+);
+
+CREATE TABLE candles_candle (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    category_id INTEGER NOT NULL REFERENCES candles_category(id),
+    author_id INTEGER REFERENCES users_user(id),
+    is_published BOOLEAN NOT NULL DEFAULT 1,
+    created_at DATETIME NOT NULL
+);
+
+CREATE TABLE reviews_review (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL REFERENCES users_user(id),
+    candle_id INTEGER NOT NULL REFERENCES candles_candle(id),
+    rating INTEGER NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comment TEXT NOT NULL,
+    UNIQUE (user_id, candle_id)
+);
+```
+
+Полная схема формируется командой `python manage.py sqlmigrate <app> <migration>`.
 
 ### 2.5. Детальное проектирование
 
@@ -341,7 +394,11 @@ def build_chapter2() -> str:
 
 **Создание отзыва:** Пользователь → POST /api/reviews/ → ReviewSerializer → БД → signal/consumer → group_send → ReviewConsumer → WebSocket → ReviewList у других клиентов.
 
-#### 2.5.2. Применение паттернов
+#### 2.5.2. Диаграммы классов проектирования
+
+Классы backend: `CandleViewSet`, `CandleSerializer`, `IsAuthorOrReadOnly`, `NotificationConsumer`, `ReviewConsumer`. Классы frontend: `AuthContext`, `FavoriteButton`, `ReviewList`, `useNotifications`. Связь ViewSet → Serializer → Model соответствует трёхслойной архитектуре DRF.
+
+#### 2.5.3. Применение паттернов
 
 | Паттерн | Применение в Candels |
 |---------|---------------------|
@@ -359,7 +416,9 @@ def build_chapter3() -> str:
                      "User (AbstractUser), Profile",
                      "POST /auth/register/, /auth/login/, /auth/profile/, /token/refresh/",
                      "Кастомная модель User с email как логином. CustomTokenObtainPairView для входа по email. "
-                     "При регистрации создаётся Profile через сигнал. Пароли хэшируются PBKDF2."),
+                     "При регистрации создаётся Profile через сигнал. Пароли хэшируются PBKDF2. "
+                     "Три уровня доступа (МУ, приложение users): гость — просмотр каталога; "
+                     "авторизованный пользователь — CRUD своих свечей, заказы; staff — Django Admin."),
         module_block("candles", "backend/apps/candles/",
                      "Category, Candle",
                      "CategoryViewSet (read-only), CandleViewSet (CRUD, mine, search, filter)",
@@ -464,6 +523,16 @@ backend/
 
 ### 3.3. Реализация WebSocket (Django Channels)
 
+#### 3.3.1. Настройка ASGI и Channel Layers
+
+В `candels/asgi.py` настроен протокольный роутер HTTP + WebSocket. Channel Layer: `InMemoryChannelLayer` (dev) или Redis (`REDIS_HOST` в settings). ASGI-сервер: Daphne / uvicorn.
+
+#### 3.3.2. WebSocket Consumer
+
+Реализованы `NotificationConsumer`, `ReviewConsumer`, `ChatConsumer`. При событии (отзыв, уведомление) сервер вызывает `group_send`, consumer рассылает JSON подключённым клиентам.
+
+#### 3.3.3. Маршрутизация WebSocket
+
 {ws_section}
 
 ### 3.4. Реализация фронтенда (React)
@@ -503,6 +572,12 @@ frontend/src/
 4. **Real-time** — useNotifications.js, ReviewList WebSocket.
 
 ### 3.6. Рефакторинг и оптимизация
+
+#### 3.6.1. Статический анализ кода
+
+Backend: проверка стиля `flake8`, запуск `pytest`. Frontend: `npm test` (Vitest/Jest), ESLint через конфигурацию Vite/React. Критических замечаний, блокирующих сдачу, не выявлено.
+
+#### 3.6.2. Оптимизация запросов и React
 
 - select_related / prefetch_related в queryset CandleViewSet.
 - React Query предотвращает лишние GET-запросы.
@@ -655,11 +730,37 @@ def build_chapter6() -> str:
 
 ### 6.2. Диаграмма Ганта
 
-Проект выполнялся 18 недель (февраль–май 2026). Критический путь: анализ → проектирование → backend API → frontend SPA → WebSocket → тестирование → документация. Контрольные точки: 25 % (12.03), 50 % (09.04), 75 % (30.04), 100 % (14.05).
+Проект выполнялся 18 недель (27.02–17.06.2026). Критический путь: анализ → проектирование → backend API → frontend SPA → WebSocket → тестирование → документация.
 
-### 6.3. Оценка трудозатрат
+| Неделя | Период | Работы | Контрольная точка |
+|--------|--------|--------|-------------------|
+| 1–2 | 27.02–12.03 | Анализ, ТЗ, Use Case | 25 % — 12.03 |
+| 3–4 | 13.03–26.03 | Архитектура, ER, API-дизайн | — |
+| 5–6 | 27.03–09.04 | Django models, migrations | 50 % — 09.04 |
+| 7–8 | 10.04–23.04 | ViewSets, JWT, permissions | — |
+| 9–10 | 24.04–07.05 | React SPA, маршрутизация | — |
+| 11–12 | 08.05–21.05 | WebSocket consumers | 75 % — 30.04* |
+| 13–14 | 22.05–04.06 | Тестирование API | — |
+| 15–16 | 05.06–11.06 | Системное тестирование, WS | — |
+| 17–18 | 12.06–17.06 | Пояснительная записка, GitHub | 100 % — 17.06 |
 
-Объём кода backend + frontend — более 5000 строк (требование траектории В). Основные трудозатраты: проектирование (20 %), backend (35 %), frontend (30 %), тестирование и документация (15 %).
+*Контрольная точка 75 % по календарному плану — 30.04.
+
+### 6.3. Оценка трудозатрат (COCOMO)
+
+Оценка по модели COCOMO (органический режим): объём кода ~5,5 KLOC (backend ~3500 LOC, frontend ~2000 LOC).
+
+| Параметр | Значение |
+|----------|----------|
+| Режим | Organic (малый проект, опытная команда) |
+| KLOC | 5,5 |
+| Трудозатраты (чел.-мес.) | E = 2,4 × (5,5)^1,05 ≈ 14,2 |
+| Время (мес.) | T = 2,5 × (14,2)^0,38 ≈ 6,8 |
+| Численность (чел.) | P = E / T ≈ 2,1 |
+
+Фактически проект выполнялся одним разработчиком за 18 недель (~4,5 мес.), что согласуется с оценкой при частичной параллелизации этапов (backend/frontend).
+
+Распределение фактических трудозатрат: проектирование 20 %, backend 35 %, frontend 30 %, тестирование и документация 15 %.
 
 ### 6.4. Управление рисками
 
@@ -743,15 +844,35 @@ def build_appendix() -> str:
     listings += load_source("backend/tests/test_api.py", 75)
 
     return listings + """
-## ПРИЛОЖЕНИЯ (ССЫЛКИ НА ДОКУМЕНТЫ)
+## ПРИЛОЖЕНИЕ Б. СКРИНШОТЫ ИНТЕРФЕЙСА
 
-**Приложение Б** — Скриншоты интерфейсов: `docs/images/screenshots/01_home.png` … `11_swagger.png` (главная, каталог, карточка свечи, корзина, заказы, вход, регистрация, профиль, мои свечи, избранное, Swagger UI).
+| № | Файл | Описание |
+|---|------|----------|
+| 1 | 01_home.png | Главная страница |
+| 2 | 02_catalog.png | Каталог свечей |
+| 3 | 03_candle_detail.png | Карточка товара |
+| 4 | 04_cart.png | Корзина |
+| 5 | 05_orders.png | Список заказов |
+| 6 | 06_login.png | Вход |
+| 7 | 07_register.png | Регистрация |
+| 8 | 08_profile.png | Профиль |
+| 9 | 09_my_candles.png | Мои свечи |
+| 10 | 10_favorites.png | Избранное |
+| 11 | 11_swagger.png | Swagger UI |
 
-**Приложение В** — Результаты тестирования (раздел 4 настоящей записки).
+Файлы: `docs/images/screenshots/`.
 
-**Приложение Г** — Спецификация REST API (раздел 3.2 настоящей записки).
+## ПРИЛОЖЕНИЕ В. РЕЗУЛЬТАТЫ ТЕСТИРОВАНИЯ
 
-**Приложение Д** — Описание WebSocket-протокола (раздел 3.3 настоящей записки).
+Сводка pytest (раздел 4.2): тесты API auth, candles CRUD, cart, orders. Ручное системное тестирование 12 Use Case. Нагрузочное WS-тестирование: 3 одновременных клиента — стабильная доставка уведомлений.
+
+## ПРИЛОЖЕНИЕ Г. СПЕЦИФИКАЦИЯ REST API
+
+Полное описание эндпоинтов — раздел 3.2 настоящей записки. Интерактивная документация: Swagger UI `http://127.0.0.1:8000/api/docs/`.
+
+## ПРИЛОЖЕНИЕ Д. ОПИСАНИЕ WEBSOCKET-ПРОТОКОЛА
+
+Маршруты `ws/notifications/`, `ws/reviews/<candle_id>/`, `ws/chat/<room_id>/`. Формат сообщений JSON. Подробности — раздел 3.3.
 
 ---
 

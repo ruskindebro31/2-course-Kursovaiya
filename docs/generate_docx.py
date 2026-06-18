@@ -169,8 +169,8 @@ def is_major(heading: str) -> bool:
 def add_heading(doc: Document, text: str, level: int) -> None:
     p = doc.add_paragraph()
     add_text(p, text, bold=True)
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     if level == 1:
-        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         for r in p.runs:
             r.font.size = SIZE_H1
     fmt_para(p, indent=False)
