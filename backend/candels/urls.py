@@ -15,6 +15,10 @@ from apps.notifications.views import NotificationViewSet
 from apps.chat.views import ChatViewSet, MessageViewSet
 from apps.favorites.views import FavoriteViewSet
 
+admin.site.site_header = 'Candels — администрирование'
+admin.site.site_title = 'Candels Admin'
+admin.site.index_title = 'Управление интернет-магазином свечей'
+
 router = DefaultRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 router.register(r'candles', CandleViewSet, basename='candle')

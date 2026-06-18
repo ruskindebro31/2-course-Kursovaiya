@@ -20,16 +20,20 @@ docs/        — документация курсового проекта (М�
 
 ### Backend
 
+Требуется **Python 3.11–3.13** (не используйте 3.14 — админ-панель Django на нём не работает).
+
 ```bash
 cd backend
-python -m venv venv
-venv\Scripts\activate
+py -3.13 -m venv venv313
+venv313\Scripts\activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py loaddata demo_catalog
 python manage.py seed_demo_catalog
 python manage.py runserver
 ```
+
+> Если раньше использовался `venv` на Python 3.14 — удалите папку `venv` и создайте `venv313` как выше. Иначе админ-панель выдаёт ошибку `'super' object has no attribute 'dicts'`.
 
 - API: http://127.0.0.1:8000/api/
 - Swagger: http://127.0.0.1:8000/api/docs/
@@ -43,6 +47,24 @@ npm run dev
 ```
 
 - SPA: http://127.0.0.1:5173
+
+### Админ-панель Django
+
+1. Создайте суперпользователя (один раз):
+
+```bash
+cd backend
+venv313\Scripts\activate
+python manage.py createsuperuser
+```
+
+2. Запустите backend (`python manage.py runserver`).
+
+3. Откройте в браузере: **http://127.0.0.1:8000/admin/**
+
+4. Войдите логином и паролем из `createsuperuser`.
+
+В админке можно редактировать свечи, категории, заказы, пользователей и отзывы.
 
 Скопируйте `.env.example` в `.env` при необходимости.
 
