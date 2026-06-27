@@ -1,6 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
-import ProtectedRoute from '../components/ProtectedRoute';
 
 function OrdersList() {
   const { data, isLoading } = useQuery({
@@ -30,5 +29,5 @@ function OrdersList() {
 }
 
 export default function OrdersPage() {
-  return <ProtectedRoute><OrdersList /></ProtectedRoute>;
+  return <OrdersList />;
 }

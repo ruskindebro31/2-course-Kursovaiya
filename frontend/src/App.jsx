@@ -35,7 +35,7 @@ export default function App() {
               <Route path="login" element={<LoginPage />} />
               <Route path="register" element={<RegisterPage />} />
               <Route path="cart" element={<CartPage />} />
-              <Route path="orders" element={<OrdersPage />} />
+              <Route path="orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
               <Route path="my-candles" element={<ProtectedRoute><MyCandlesPage /></ProtectedRoute>} />
               <Route path="favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
               <Route path="profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />

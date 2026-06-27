@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../api/client';
 import { useAuth } from '../contexts/AuthContext';
-
-const WS_BASE = import.meta.env.VITE_WS_URL || 'ws://127.0.0.1:8000';
+import { getWsBase } from '../utils/apiConfig';
 
 export default function ReviewList({ candleId }) {
   const { isAuth } = useAuth();
@@ -17,7 +16,7 @@ export default function ReviewList({ candleId }) {
   });
 
   useEffect(() => {
-    const ws = new WebSocket(`${WS_BASE}/ws/reviews/${candleId}/`);
+    const ws = new WebSocket(`${getWsBase()}/ws/reviews/${candleId}/`);
     ws.onmessage = (event) => {
       const payload = JSON.parse(event.data);
       if (payload.type !== 'review') return;

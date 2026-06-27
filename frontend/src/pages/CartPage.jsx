@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import api from '../api/client';
 import { useCartStore } from '../store/cartStore';
 import { useAuth } from '../contexts/AuthContext';
-import ProtectedRoute from '../components/ProtectedRoute';
 
 function CartContent() {
   const { items, removeItem, total, clear } = useCartStore();
@@ -14,7 +13,7 @@ function CartContent() {
 
   const checkout = async () => {
     if (!isAuth) {
-      navigate('/login');
+      navigate('/login', { state: { from: { pathname: '/cart' } } });
       return;
     }
     setLoading(true);

@@ -14,7 +14,7 @@ export default function RegisterPage() {
     e.preventDefault();
     try {
       await register(form);
-      navigate('/catalog');
+      navigate('/');
     } catch (err) {
       const detail = err.response?.data;
       const msg = typeof detail === 'object'

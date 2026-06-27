@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
+import { useAuth } from '../contexts/AuthContext';
 import FavoriteButton from '../components/FavoriteButton';
 import ReviewList from '../components/ReviewList';
 import { useCartStore } from '../store/cartStore';
@@ -9,6 +10,7 @@ import { mediaUrl } from '../utils/mediaUrl';
 
 export default function CandleDetailPage() {
   const { id } = useParams();
+  const { isAuth } = useAuth();
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
   const { data: candle, isLoading } = useQuery({
@@ -18,6 +20,7 @@ export default function CandleDetailPage() {
   const { data: favorites } = useQuery({
     queryKey: ['favorites'],
     queryFn: () => api.get('favorites/').then((r) => r.data.results || r.data),
+    enabled: isAuth,
     retry: false,
   });
 

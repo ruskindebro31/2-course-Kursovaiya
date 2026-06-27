@@ -17,4 +17,9 @@ if %PYMINOR% GEQ 14 (
   call venv\Scripts\activate.bat
   pip install -r requirements.txt
 )
+echo Building frontend...
+pushd "%~dp0..\frontend"
+if not exist "node_modules\" call npm install
+call npm run build
+popd
 python manage.py runserver %*

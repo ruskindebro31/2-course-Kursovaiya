@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { getApiBase } from '../utils/apiConfig';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/',
+  baseURL: getApiBase(),
 });
 
 api.interceptors.request.use((config) => {
@@ -25,12 +26,11 @@ api.interceptors.response.use(
     const refresh = localStorage.getItem('refresh_token');
     if (!refresh) {
       localStorage.removeItem('access_token');
-      window.location.href = '/login';
       return Promise.reject(error);
     }
     if (!refreshing) {
       refreshing = axios
-        .post(`${import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api/'}auth/token/refresh/`, { refresh })
+        .post(`${getApiBase()}auth/token/refresh/`, { refresh })
         .then((res) => {
           localStorage.setItem('access_token', res.data.access);
           if (res.data.refresh) {
@@ -47,7 +47,6 @@ api.interceptors.response.use(
     } catch {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
-      window.location.href = '/login';
       return Promise.reject(error);
     }
   },

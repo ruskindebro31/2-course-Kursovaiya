@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../api/client';
+import { useAuth } from '../contexts/AuthContext';
 import CandleCard from './CandleCard';
 
 export const SEASON_GROUPS = [
@@ -11,6 +12,7 @@ export const SEASON_GROUPS = [
 ];
 
 export default function ProductCatalog({ title = 'Каталог', showHero = false }) {
+  const { isAuth } = useAuth();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [season, setSeason] = useState('');
@@ -19,6 +21,7 @@ export default function ProductCatalog({ title = 'Каталог', showHero = fa
   const { data: favorites } = useQuery({
     queryKey: ['favorites'],
     queryFn: () => api.get('favorites/').then((r) => r.data.results || r.data),
+    enabled: isAuth,
     retry: false,
   });
 

@@ -33,18 +33,28 @@ python manage.py seed_demo_catalog
 python manage.py runserver
 ```
 
-Или на Windows одной командой (сам пересоздаст venv при Python 3.14):
+Или на Windows одной командой (соберёт frontend и запустит сервер):
 
 ```bash
+cd backend
 runserver.bat
 ```
 
 > **Важно:** не используйте Python 3.14. При ошибке `'super' object has no attribute 'dicts'` удалите папку `venv` и выполните `py -3.13 -m venv venv` заново.
 
+- **Сайт (главная Home):** http://127.0.0.1:8000/
 - API: http://127.0.0.1:8000/api/
 - Swagger: http://127.0.0.1:8000/api/docs/
 
-### Frontend
+Перед первым запуском соберите frontend (или используйте `runserver.bat` — он делает это автоматически):
+
+```bash
+cd frontend
+npm install
+npm run build
+```
+
+### Frontend (режим разработки)
 
 ```bash
 cd frontend
@@ -52,7 +62,7 @@ npm install
 npm run dev
 ```
 
-- SPA: http://127.0.0.1:5173
+- Dev-сервер: http://127.0.0.1:5173 (запросы `/api/` и WebSocket проксируются на backend :8000)
 
 ### Админ-панель Django
 

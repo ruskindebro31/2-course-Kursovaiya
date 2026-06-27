@@ -13,16 +13,17 @@ export default function Layout() {
       <header className="header">
         <Link to="/" className="logo">Candels</Link>
         <nav>
+          <Link to="/">Главная</Link>
           <Link to="/catalog">Каталог</Link>
-          <Link to="/my-candles">Мои свечи</Link>
-          <Link to="/favorites">Избранное</Link>
           <Link to="/cart">
             Корзина
             {cartCount > 0 && <span className="badge">{cartCount}</span>}
           </Link>
-          <Link to="/orders">Заказы</Link>
           {isAuth ? (
             <>
+              <Link to="/my-candles">Мои свечи</Link>
+              <Link to="/favorites">Избранное</Link>
+              <Link to="/orders">Заказы</Link>
               <Link to="/profile">Профиль</Link>
               <button type="button" onClick={logout}>Выйти</button>
               {notifications.length > 0 && (
@@ -30,10 +31,7 @@ export default function Layout() {
               )}
             </>
           ) : (
-            <>
-              <Link to="/login">Вход</Link>
-              <Link to="/register">Регистрация</Link>
-            </>
+            <Link to="/login" className="btn-nav-login">Вход</Link>
           )}
         </nav>
       </header>
@@ -43,3 +41,4 @@ export default function Layout() {
     </div>
   );
 }
+

@@ -1,16 +1,12 @@
-import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../api/client';
-import { useAuth } from '../contexts/AuthContext';
 
 export default function MyCandlesPage() {
-  const { isAuth } = useAuth();
   const queryClient = useQueryClient();
   const { data, isLoading } = useQuery({
     queryKey: ['my-candles'],
     queryFn: () => api.get('candles/mine/').then((r) => r.data.results || r.data),
-    enabled: isAuth,
   });
 
   const deleteMutation = useMutation({
@@ -18,7 +14,6 @@ export default function MyCandlesPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['my-candles'] }),
   });
 
-  if (!isAuth) return <p><Link to="/login">Войдите</Link>, чтобы видеть свои свечи.</p>;
   if (isLoading) return <p>Загрузка...</p>;
 
   return (
