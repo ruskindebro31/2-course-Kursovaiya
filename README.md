@@ -12,7 +12,7 @@ docs/        — документация курсового проекта (М�
 
 ## Документация
 
-Пояснительная записка (~50 стр., ГОСТ): [docs/docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx](docs/docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx) · [docs/docx/ПЗ_Рашевский.docx](docs/docx/ПЗ_Рашевский.docx)
+[Пояснительная записка](docs/ПЗ_Рашевский.docx) · [docs/README.md](docs/README.md)
 
 ## Запуск
 
@@ -100,11 +100,3 @@ cd frontend && npm test
 | Репозиторий | https://github.com/ruskindebro31/2-course-Kursovaiya |
 | Траектория | В (Django REST + React + JWT + WebSocket) |
 | Стек | Django 4.2, DRF, Channels, React 19, Vite, TanStack Query |
-
-### График активности
-
-![Активность коммитов](docs/images/git-commit-activity.png)
-
-### Тепловая карта
-
-![Распределение по времени](docs/images/git-punch-card.png)

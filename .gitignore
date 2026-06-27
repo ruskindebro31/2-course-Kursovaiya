@@ -34,7 +34,12 @@ Thumbs.db
 # Logs
 *.log
 
-# Документация: MD локально, DOCX на GitHub
+# Документация: MD и скрипты генерации — только локально
 docs/*.md
 !docs/README.md
+docs/*.py
+docs/requirements-docx.txt
+docs/images/
+docs/docx/
+docs/_mu_check.txt
 docs/_mk_snippets.py
