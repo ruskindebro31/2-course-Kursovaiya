@@ -2,12 +2,12 @@
 
 Траектория **В**: Django REST + React SPA + JWT + WebSocket.
 
-## Пояснительная записка
+## Пояснительная записка (DOCX, ГОСТ 7.32-2017)
 
 | Документ | Файл |
 |----------|------|
-| Пояснительная записка (~60 стр., ГОСТ) | [docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx](docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx) |
-| Скриншоты (Приложение Б) | [images/screenshots/](images/screenshots/) |
+| Пояснительная записка (~50–60 стр.) | [docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx](docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx) |
+| Копия для сдачи | [docx/ПЗ_Рашевский.docx](docx/ПЗ_Рашевский.docx) |
 
 ## Пересборка
 
@@ -15,7 +15,7 @@
 pip install -r docs/requirements-docx.txt
 python docs/build_full_report.py
 python docs/generate_docx.py
-python docs/generate_screenshots.py
+python docs/generate_git_charts.py
 ```
 
-Результат: `docs/docx/ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.docx` и копия на рабочем столе `ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА_Candels.docx`. Скрипт проверяет открытие в Microsoft Word.
+Исходник Markdown (`ПОЯСНИТЕЛЬНАЯ_ЗАПИСКА.md`) хранится локально (в `.gitignore`).
