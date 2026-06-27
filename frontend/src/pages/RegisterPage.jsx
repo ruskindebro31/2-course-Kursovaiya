@@ -15,8 +15,12 @@ export default function RegisterPage() {
     try {
       await register(form);
       navigate('/catalog');
-    } catch {
-      setError('Ошибка регистрации. Проверьте данные.');
+    } catch (err) {
+      const detail = err.response?.data;
+      const msg = typeof detail === 'object'
+        ? Object.entries(detail).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('; ')
+        : null;
+      setError(msg || 'Ошибка регистрации. Проверьте данные.');
     }
   };
 

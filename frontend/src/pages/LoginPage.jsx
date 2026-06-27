@@ -14,8 +14,12 @@ export default function LoginPage() {
     try {
       await login(email, password);
       navigate('/catalog');
-    } catch {
-      setError('Неверный email или пароль');
+    } catch (err) {
+      const detail = err.response?.data;
+      const msg = typeof detail === 'object'
+        ? Object.entries(detail).map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join(', ') : v}`).join('; ')
+        : null;
+      setError(msg || 'Неверный email или пароль');
     }
   };
 
